@@ -1,7 +1,12 @@
-# Multiplication Tables
+# Japanese Tables
+...or alphabets
 
-Small program to help pupils learn the multiplication tables.
-Inspired by a lost old GWBASIC program.
+Small program to help me learn hiragana (and soon katakana).
+Forked from my very first program teaching [multiplication tables](https://github.com/Loloweb/MultiplicationTables), which is itself inspired by a lost old GWBASIC program.
+
+The idea is to take the algorithm that I used for multiplication tables and use it to learn hiragana. In this case, you could interpret the 2 caracters as an operation that you would have to solve by typing the meaning in romanji. For example, the program might show "あい" and the user will have to type "ai".
+
+Below is a description of the algorithm as it was used for multiplication:
 
 It is most useful when the pupil already knows the tables **in order** and has to learn them at random.
 At this stage it is difficult for parents or teachers to question the student in a really random way and without forgetting any operation or ask for the same operation too often. As it must be done agin and again, it can quickly become a chore for them and for the pupil.
