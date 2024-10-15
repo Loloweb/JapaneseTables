@@ -19,8 +19,8 @@ this_version = '3.3'
 Title = 'Japanese table game'
 # if the first answer is not right, require this number of consecutive right answers FOR THIS OPERATION
 nb_consecutive_right_answers_required = 2
-min_table = 0		# minimum table: usually 0 or 1 (maybe better to put 1 here for young pupil?) 
-max_table = 12		# maximum table: usually 10 or 12
+min_table = 0		# minimum table: usually 0 or 1
+max_table = 10		# maximum table: usually 10 or 12
 
 
 import winsound
@@ -105,7 +105,7 @@ def select_table_range():
 	to_table = -1
 	while to_table < from_table or from_table < min_table or from_table > max_table or to_table < 0 or to_table > max_table :
 		
-		input_text = '1=a 2=ka 3=sa 4=ta 5=na 6=ha 7=ma 8=ya 9=ra 10=wa 11=n\nLearn table from (' +str(min_table) + ' to ' + str(max_table) +'): '
+		input_text = '0=a 1=ka 2=sa 3=ta 4=na 5=ha 6=ma 7=ya 8=ra 9=wa 10=n\nLearn table from (' +str(min_table) + ' to ' + str(max_table) +'): '
 		while from_table < min_table or from_table > 10:
 			cursor_xy( 1, y_center)
 			clear_line()
@@ -135,27 +135,28 @@ def select_table_range():
 
 # Build a string. Example: 'か : '
 # Used to display the operation but also to build the key of the operation_dict{} dictionnary 
-def operation_1str(op1):
-    return ( str(op1) + ': ' )
+def operation_1str(op1, op2):
+    return ( hiragana[op1][op2] + ': ' )
 
 # Build a string. Example: 'かき : '
-def operation_2str(op1, op2):
-    return ( str(op1) + str(op2) + ': ' )
+# Unused for now
+def operation_2str(op1, op2, op3, op4):
+    return ( hiragana[op1][op2] + hiragana[op3][op4] + ': ' )
 
 
 # Display an operation and ask for the answer
 def ask_operation(op1, op2):
     clear_screen()
-    text_to_display = operation_1str(op1)
-    answer = 1
-    while answer.isdigit():
+    text_to_display = operation_1str(op1, op2)
+    answer = -1
+    while answer == -1:
         cursor_xy( 1, y_center)
         clear_line()
         cursor_xy( x_center_operation, y_center)
         print(color_input + text_to_display, end='')
         try:
             answer = press_any_key()
-            answer = int(answer)
+            answer = answer
         except:
             answer = -1
     return answer
@@ -164,7 +165,7 @@ def ask_operation(op1, op2):
 # Display a "right answer feedback", with an optional message 
 def feedback_right_answer(op1, op2, result, Message):
     clear_screen()
-    text_to_display = operation_1str(hiragana[op1][op2]) + str(result)
+    text_to_display = operation_1str(op1, op2) + str(result)
     cursor_xy( x_center_operation, y_center)
     print( color_correct + text_to_display, end='' )
     print( color_normal + ' ' + Message, end='' )
@@ -174,7 +175,7 @@ def feedback_right_answer(op1, op2, result, Message):
 # Display a "wrong answer feedback", with an optional message 
 def feedback_wrong_answer(op1, op2, result, Message):
     clear_screen()
-    text_to_display = operation_1str(hiragana[op1][op2]) + str(result)
+    text_to_display = operation_1str(op1, op2) + str(result)
     cursor_xy( x_center_operation, y_center)
     print( color_error + text_to_display, end='' )
     print( color_normal + ' ' + Message, end='' )
@@ -193,10 +194,11 @@ def final_result_screen():
     
     # Display one by one each operation for which at least one wrong answer was typed
     for table in range(from_table, (to_table+1)) :
-        for operande in range(0, 11):
-            if operation_dict[operation_1str(hiragana[table][operande])]['nb_wrong'] > 0:
+        for operande in range(0, 5):
+            key = operation_1str(table, operande)
+            if key in operation_dict and operation_dict[key]['nb_wrong'] > 0:
                 clear_screen()
-                feedback_right_answer( table, operande, (hiragana[table][operande]), 'Incorrect' )
+                feedback_right_answer( table, operande, (romanji[table][operande]), 'Remember this!' )
                 press_any_key()
     
     # Display bye bye!
@@ -270,8 +272,8 @@ operations_not_known = []
 
 # Generates the tables for the operations to ask: all operations are set to UNKNOWN
 for table in range(from_table, (to_table+1)) :
-    for operande in range(min_table, (max_table+1)):
-        operation_dict[operation_1str(hiragana[table][operande])] = { 'nb_wrong': 0, 'nb_last_right': 0 }
+    for operande in range(min_table, 4):
+        operation_dict[operation_1str(table, operande)] = { 'nb_wrong': 0, 'nb_last_right': 0 }
         operations_not_known.append( (table, operande) )
 
 
@@ -291,12 +293,12 @@ while len(operations_not_known) > 0:
 
     # Check the answer
     right_result = romanji[op1][op2]
-    if answer == right_result:
+    if answer.strip().lower() == right_result:
         # right answer
-        if ( operation_dict[operation_1str(hiragana[op1][op2])]['nb_wrong'] == 0 ) and ( operation_dict[operation_1str(hiragana[op1][op2])]['nb_last_right'] == 0 ):
+        if ( operation_dict[operation_1str(op1, op2)]['nb_wrong'] == 0 ) and ( operation_dict[operation_1str(op1, op2)]['nb_last_right'] == 0 ):
             #
             # right answer the first time
-            operation_dict[operation_1str(hiragana[op1][op2])]['nb_last_right'] = 1	# Set the last right answer counter to 1answer to 1
+            operation_dict[operation_1str(op1, op2)]['nb_last_right'] = 1	# Set the last right answer counter to 1answer to 1
             del operations_not_known[index_operations_not_known]      		# This operation is now assumed to be known: remove it from the unknown operation list
             feedback_right_answer( op1, op2, right_result, ':)' )
         else:
