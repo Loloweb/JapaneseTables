@@ -45,10 +45,10 @@ from colorama import Fore, Back, Style
 # Foreground colors: Fore.BLACK, Fore.RED, Fore.GREEN, Fore.YELLOW, Fore.BLUE, Fore.MAGENTA, Fore.CYAN, Fore.WHITE
 # Background colors: Back.BLACK, Back.RED, Back.GREEN, Back.YELLOW, Back.BLUE, Back.MAGENTA, Back.CYAN, Back.WHITE
 # styles: Style.DIM, Style.NORMAL, Style.BRIGHT
-color_normal = Fore.WHITE + Style.NORMAL + Back.CYAN
-color_input = Fore.WHITE + Style.NORMAL + Back.CYAN
-color_error = Fore.YELLOW + Style.BRIGHT + Back.CYAN
-color_correct = Fore.GREEN + Style.BRIGHT + Back.CYAN
+color_normal = Fore.WHITE + Style.BRIGHT + Back.BLUE
+color_input = Fore.WHITE + Style.BRIGHT + Back.BLUE
+color_error = Fore.YELLOW + Style.BRIGHT + Back.BLUE
+color_correct = Fore.GREEN + Style.BRIGHT + Back.BLUE
 
 def get_console_name():
     # Get the current process
@@ -66,6 +66,14 @@ def get_console_name():
     
     return process_names
 
+# Fun fact! This fanfare is called "Charge" and was made by Tommy Walker in 1946 for some baseball team.
+def fanfare():
+    winsound.Beep(523, 75)
+    winsound.Beep(698, 75)
+    winsound.Beep(880, 75)
+    winsound.Beep(1046, 150)
+    winsound.Beep(880, 75)
+    winsound.Beep(1046, 200)
 
 def check_old_terminal():
       detected_consoles = get_console_name()
@@ -170,6 +178,7 @@ def feedback_right_answer(op1, op2, result, Message):
     print( color_correct + text_to_display, end='' )
     print( color_normal + ' ' + Message, end='' )
     winsound.Beep(440, 100)
+    time.sleep(0.25)
 
 
 # Display a "wrong answer feedback", with an optional message 
@@ -206,7 +215,7 @@ def final_result_screen():
     text = 'See you soon!'
     cursor_xy( x_center_text(len(text)), y_center)
     print(text)
-    winsound.Beep(523, 100);winsound.Beep(698, 100);winsound.Beep(880, 100);winsound.Beep(1046, 200);winsound.Beep(880, 50);winsound.Beep(1046, 300);
+    fanfare()
     press_any_key()
 
 
